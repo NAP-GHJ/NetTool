@@ -6,10 +6,10 @@ public class test {
 		try{
 			/*Read Command*/
 			
-			String cmd = "ssh 192.168.108.131 docker daemon -b=br0 --fixed-cidr=10.0.1.0/24";
+			String cmd = "ssh 192.168.108.133 echo y | socketplane install";
 			Command command;
 			
-			command = new Command(cmd,false);
+			command = new Command(cmd,true);
 			
 			//command = new Command("ssh 192.168.108.131 docker rm `docker ps -a -q`",true);
 			

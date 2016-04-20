@@ -58,7 +58,7 @@ public class Command {
 					firstLine = line;
 					first = 1;
 				}
-				System.out.println(line);
+				System.out.println(line+"ghj");
 			}
 		}
 		catch(Exception e){

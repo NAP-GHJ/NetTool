@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
+import javax.print.DocFlavor.STRING;
+
 /*Add container */
 
 public class Container {
@@ -311,5 +313,15 @@ public class Container {
 	/*network name check*/
 	private boolean networkNameCheck(String name){
 		return new Network().networkNameCheck(name);
+	}
+	
+	/*Container Test Network Performance*/
+	public void testPerformance(String host1,String con1, String host2,String con2){
+		String ip1 = new Host().HostIp(host1);
+		String ip2 = new Host().HostIp(host2);
+		String ssh1 = "ssh "+ip1+" ";
+		String ssh2 = "ssh "+ip2+" ";
+		
+		
 	}
 }

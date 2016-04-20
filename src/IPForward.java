@@ -10,7 +10,7 @@ public class IPForward {
 		if(type.equalsIgnoreCase("default")){
 			defaultNetwork();
 		}
-		else if(type.equalsIgnoreCase("vxlan")){
+		else if(type.equalsIgnoreCase("option")){
 			
 		}
 		else{
