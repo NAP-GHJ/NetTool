@@ -5,7 +5,8 @@ import java.util.Scanner;
 
 /*Info and Functions for Host*/
 public class Host {
-	String name;
+	
+	String name;     
 	String ipEth0;
 	String ipEth1;
 	
@@ -18,7 +19,7 @@ public class Host {
 	public Host(){}
 	public Host(String []args){
 		if(args.length < 3){
-			System.out.println("error usage ...\n");
+			System.out.println("Error usage .");
 			Usage usage = new Usage("Host");
 		}
 		else{
@@ -41,7 +42,7 @@ public class Host {
 			
 			File fileName = new File(netTool.hostFile);
 			if(fileName.exists()){
-				//System.out.println("hosts.txt file exists");
+				
 				Scanner input = new Scanner(fileName);
 				String lastLine =  null;
 				while(input.hasNext()){
@@ -71,7 +72,7 @@ public class Host {
 			String eth1 =ssh+"ifconfig eth1 "+ipEth1+" up";
 			/*Process cmd in order*/
 			Command command = null;
-			command = new Command(eth1, true);
+			command = new Command(eth1, false);
 			
 		}
 		catch(Exception e){
@@ -103,7 +104,7 @@ public class Host {
 			input.close();
 		}
 		catch(Exception e){
-			System.out.println("Show host read file error");
+			System.out.println("Show host read file error .");
 		}
 	}
 	
@@ -114,7 +115,7 @@ public class Host {
 			NetTool netTool = new NetTool();
 			File file = new File(netTool.hostFile);
 			if(!file.exists()){
-				System.out.println("No host in the cluster");
+				System.out.println("No host in the cluster .");
 				return string;
 			}
 			Scanner input = new Scanner (file);
@@ -129,7 +130,7 @@ public class Host {
 			input.close();
 		}
 		catch(Exception e){
-			System.out.println("Show host read file error");
+			System.out.println("Show host read file error .");
 			//return string;
 		}
 		return string;
@@ -141,7 +142,7 @@ public class Host {
 			NetTool netTool = new NetTool();
 			File file =new File(netTool.hostFile);
 			if(!file.exists()){
-				System.out.println("No host in the cluster");
+				System.out.println("No host in the cluster .");
 				return;
 			}
 			Scanner input = new Scanner (file);
@@ -157,7 +158,7 @@ public class Host {
 			input.close();
 		}
 		catch(Exception e){
-			System.out.println(e+"Show host read file error");
+			System.out.println(e+"Show host read file error .");
 		}
 	}
 }

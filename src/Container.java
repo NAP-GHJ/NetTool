@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-import javax.print.DocFlavor.STRING;
 
 /*Add container */
 
@@ -28,12 +27,11 @@ public class Container {
 	/*Default add container*/
 	public void defaultC(String host){
 		String ip = new Host().HostIp(host);
-		//System.out.println(ip);
-		/*Read host-container.txt to name a container*/
+		
 		String ssh = "ssh "+ip;
-		String conString = " docker run -itd --net none test bash";
+		String conString = " docker run -itd test bash";
 		String cmd = ssh+conString;
-		Command process = new Command(cmd, true);
+		Command command = new Command(cmd,true);
 		
 	}
 	
@@ -43,10 +41,12 @@ public class Container {
 		
 		/*command*/
 		Command command;
+		
+		String cmdString;
 			
 		/*ssh*/
 		String hostIp = new Host().HostIp(host);
-		String ssh = "ssh "+hostIp+" ";
+		String sshString = "ssh "+hostIp+" ";
 		
 		/*switch the network */
 		String fileName = new NetTool().networkFile;
@@ -66,6 +66,23 @@ public class Container {
 		String [] info;
 		
 		switch(type){
+			case "ip-forward":
+				do{
+					System.out.println("Network type is ip-forward ,please input the name of the container: ");
+					nameString = input.nextLine();
+				}
+				while(!nameCheck(host, nameString));
+				
+				cmdString = sshString+" docker run -itd --name "+nameString+" test bash";
+				command = new Command(cmdString, true);
+				
+				/*Update information*/
+				info = new String[2];
+				info[0] = nameString;
+				info[1] = getContainerIp(hostIp,nameString);
+				updateHostFile(host,info);
+				
+				break;
 			case "linux-bridge":			
 				do{
 					System.out.println("Network type is linux-bridge ,please input the name of the container: ");
@@ -73,7 +90,7 @@ public class Container {
 				}
 				while(!nameCheck(host, nameString));
 				
-				String case1 = ssh+" docker run -itd --name "+nameString+" test bash";
+				String case1 = sshString+" docker run -itd --name "+nameString+" test bash";
 				command = new Command(case1, true);
 				
 				/*update info*/
@@ -97,7 +114,7 @@ public class Container {
 				}
 				while(!nameCheck(host, nameString));
 				
-				String cmd = ssh+" weave run "+ipString+" -itd --name "+nameString+" test bash";
+				String cmd = sshString+" weave run "+ipString+" -itd --name "+nameString+" test bash";
 				command = new Command(cmd, true);
 				
 				/*update info*/
@@ -113,8 +130,8 @@ public class Container {
 				ipC = input.nextLine();
 				}
 				while(!ipCheck(ipC));
-				String con = ssh +" docker run -itd --net none --name "+nameC+" test bash";
-				String addIp = ssh +" calicoctl container add "+nameC+" "+ipC;
+				String con = sshString +" docker run -itd --net none --name "+nameC+" test bash";
+				String addIp = sshString +" calicoctl container add "+nameC+" "+ipC;
 				command = new Command(con, true);
 				command = new Command(addIp, true);		
 				break;
@@ -132,9 +149,9 @@ public class Container {
 				}
 				while(!ipCheck(ipString));
 				
-				String cmd1 = ssh+" docker run -itd --net=none --name "+nameString+" test bash";
+				String cmd1 = sshString+" docker run -itd --net=none --name "+nameString+" test bash";
 				command = new Command(cmd1, true);
-				String cmd2 = ssh+" pipework ovs0 "+nameString+" "+ipString+" @"+tagString;
+				String cmd2 = sshString+" pipework ovs0 "+nameString+" "+ipString+" @"+tagString;
 				System.out.println(cmd2);
 				command = new Command(cmd2, true);
 				
@@ -159,7 +176,7 @@ public class Container {
 				}
 				while(!networkNameCheck(networkName));
 				
-				cmd = ssh+" docker run -itd --name "+nameString+" --net "+networkName+" test bash";
+				cmd = sshString+" docker run -itd --name "+nameString+" --net "+networkName+" test bash";
 				command = new Command(cmd, true);
 				
 				/*get the ip of the container */
@@ -316,12 +333,56 @@ public class Container {
 	}
 	
 	/*Container Test Network Performance*/
+	public void testPerformance(String [] args){
+		if(args.length < 5){
+			System.out.println("Test-container error usage .");
+			Usage usage = new Usage("Container");
+			return;
+		}
+		
+		testPerformance(args[1], args[2], args[3], args[4]);
+	}
+	/*Container Test Network Performance*/
 	public void testPerformance(String host1,String con1, String host2,String con2){
 		String ip1 = new Host().HostIp(host1);
 		String ip2 = new Host().HostIp(host2);
 		String ssh1 = "ssh "+ip1+" ";
 		String ssh2 = "ssh "+ip2+" ";
 		
+		String cmdString;
+		Command command;
 		
+		System.out.println("Please waiting for result ... ... ... \n");
+		cmdString = ssh1 + " docker exec "+con1+" qperf &>/dev/null &";
+		command = new Command(cmdString,false);
+		
+		String conIpString = nameToIp(host1,con1);
+		
+		cmdString = ssh2 + " docker exec "+con2+" qperf "+conIpString+" tcp_lat tcp_bw udp_lat udp_bw";
+		command = new Command( cmdString, true);
+		
+	}
+	
+	/*Container : name to ip*/
+	public String nameToIp(String host, String name){
+		try{
+			
+			String fileName = (new NetTool().dir1)+"/"+host;
+			File file = new File(fileName);
+			Scanner input = new Scanner(file);
+			while(input.hasNext()){
+				String temp = input.nextLine();
+				String []token = temp.split(" ");
+				if(token[0].equalsIgnoreCase(name)){
+					input.close();
+					return token[1];
+				}
+			}
+			input.close();
+		}
+		catch(Exception e){
+			
+		}
+		return  null;
 	}
 }

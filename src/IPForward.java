@@ -4,6 +4,16 @@ import java.util.Scanner;
 /*Ip forward network*/
 public class IPForward {
 	
+	/*Host Info*/
+	int maxSize = 10;
+	int number ;
+	String []hostList = new String[maxSize];
+	String []eth0List = new String[maxSize];
+	String []eth1List = new String[maxSize];
+	String []ipBr0 = new String[maxSize];
+	String []iprange = new String [maxSize];
+	
+	
 	/*IPForward*/
 	public IPForward(String []args){
 		String type = args[2];
@@ -11,93 +21,120 @@ public class IPForward {
 			defaultNetwork();
 		}
 		else if(type.equalsIgnoreCase("option")){
-			
+			optionNetwork();
 		}
 		else{
-			System.out.println("add-network ip forward error");
-			Usage usage = new Usage();
+			System.out.println("Error usage .");
+			Usage usage = new Usage("Network");
 		}
 		
 	}
 	
-	/*Default network*/
-	public void defaultNetwork(){
-		try{
-			/*Host IP*/
-			int maxSize = 10;
-			int current = 0;
-			String []hosts = new String[maxSize];
-			String []eth0s = new String[maxSize];
-			String []eth1s = new String[maxSize];
-			String []ipBr0 = new String[maxSize];
-			String []iprange = new String [maxSize];
-			
-			/*Full-Connections Between Hosts*/
-			File file = new File("/home/ghj/netToolFile/hosts.txt");
-			if(!file.exists()){
-				System.out.println("File hosts.txt doesn't exit , add-host first ");
-				return;
-			}
-			Scanner input = new Scanner(file);
-			while(input.hasNext()){
-				String temp = input.nextLine();
-				String []tokens = temp.split(" ");
-				hosts[current] = tokens[0];
-				eth0s[current] = tokens[1];
-				eth1s[current] = tokens[2];
-				current ++;
-				iprange[current-1] = "10.0."+current+".0/24";
-				ipBr0[current-1] = "10.0."+current+".1/24";
-			}
-			input.close();
-			
-			/*Process cmd in order*/
-			Command command = null;
-			/*Create bridge br0 on each host*/
-			String []ssh = new String[maxSize];
-			for(int i = 0; i < current; i++){
-				ssh[i] = "ssh "+eth0s[i]+" ";
-			}
-			
-			String []br0s = new String[maxSize];
-			for(int i = 0; i < current; i++){
-				br0s[i] = ssh[i]+" brctl addbr br0;ifconfig br0 "+ipBr0[i]+" up";
-				System.out.println(br0s[i]);
-				command = new Command(br0s[i], false);
-			}
-			
-			/*Ip forward*/
-			for(int i = 0; i < current; i++){
-				for(int j = 0; j < current; j++){
-					if(j != i){
-						String ipRoute = ssh[i]+"ip route add "+iprange[j]+" via "+eth1s[j];
-						System.out.println(ipRoute);
-						command = new Command(ipRoute, false);
-					}
-				}
-			}
-			
-			/*Docker service*/
-			for(int i = 0; i < current; i++){
-				String dockerStr = ssh[i]+" service docker stop; docker daemon -b=br0";
-				System.out.println(dockerStr);
-				command = new Command(dockerStr, false);
-			}
-			
-			/*Write Network info to network.txt*/
-			
-			/***************************/
-			
-			
-			
-		}
-		catch(Exception e){
-			
-		}
+	/*Get Host Info*/
+	public void getHostInfo(){
+		Host host = new Host();
+		host.getHostInfo();
+		number = host.current;
+		hostList = host.nameList;
+		eth0List = host.ethList0;
+		eth1List = host.ethList1;
 	}
 	
-	/*Vxlan network*/
-	public void vxlanNetwork(){
-		return;
+	/*Default network*/
+	public void defaultNetwork(){
+		getHostInfo();
+		
+		/*Command*/
+		String cmdString = null;
+		Command command = null;
+		
+		for(int i = 0; i < number ; i++){
+			iprange[i] = "10.0."+i+".0/24";
+			ipBr0[i] = "10.0."+i+".1/24";
+		}
+	
+		String sshString;
+			
+		/*Add br0 bridge*/
+		for(int i = 0; i < number; i++){
+			
+			sshString = "ssh "+eth0List[i]+" ";	
+			cmdString = sshString + " brctl addbr br0;ifconfig br0 "+ipBr0[i]+" up";
+			System.out.println(cmdString);
+			command = new Command(cmdString, false);
+		}
+			
+		/*Ip forward*/
+		for(int i = 0; i < number; i++){
+			sshString = "ssh "+eth0List[i]+" ";
+			for(int j = 0; j < number; j++){
+				if(j != i){
+					cmdString = sshString+" ip route add "+iprange[j]+" via "+eth1List[j];
+					System.out.println(cmdString);
+					command = new Command(cmdString, false);
+				}
+			}
+		}
+		
+		/*Docker service*/
+		for(int i = 0; i < number; i++){
+			sshString = "ssh "+eth0List[i]+" ";
+			cmdString = sshString+" service docker stop; docker daemon -b=br0 &>/dev/null &";
+			System.out.println(cmdString);
+			command = new Command(cmdString, false);
+		}
+		
+	}
+	
+	/*Option network*/
+	public void optionNetwork(){
+		getHostInfo();
+		
+		/*Command*/
+		String cmdString = null;
+		Command command = null;
+		
+		System.out.println("Network type is ip-forward , please input the ip-range:");
+		Scanner input = new Scanner(System.in);
+		
+		for(int i = 0; i < number; i++){
+			System.out.println("Please input ip-range for Host-"+(i+1));
+			System.out.println("    -- iprange:");
+			iprange[i] = input.nextLine();
+			System.out.println("    -- ip for linux-bridge to connect containers:");
+			ipBr0[i] = input.nextLine();
+		}
+	
+		String sshString;
+			
+		/*Add br0 bridge*/
+		for(int i = 0; i < number; i++){
+			
+			sshString = "ssh "+eth0List[i]+" ";	
+			cmdString = sshString + " brctl addbr br0;ifconfig br0 "+ipBr0[i]+" up";
+			System.out.println(cmdString);
+			command = new Command(cmdString, false);
+		}
+			
+		/*Ip forward*/
+		
+		for(int i = 0; i < number; i++){
+			sshString = "ssh "+eth0List[i]+" ";
+			for(int j = 0; j < number; j++){
+				if(j != i){
+					cmdString = sshString+" ip route add "+iprange[j]+" via "+eth1List[j];
+					System.out.println(cmdString);
+					command = new Command(cmdString, false);
+				}
+			}
+		}
+		
+		/*Docker service*/
+		for(int i = 0; i < number; i++){
+			sshString = "ssh "+eth0List[i]+" ";
+			cmdString = sshString+" service docker stop; docker daemon -b=br0 &>/dev/null &";
+			System.out.println(cmdString);
+			command = new Command(cmdString, false);
+		}
 	}
 }

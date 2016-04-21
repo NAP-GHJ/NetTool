@@ -30,11 +30,14 @@ public class ReadCommand {
 		case "show-container":
 			new Container().display();
 			break;
+		case "test-container":
+			new Container().testPerformance(args);
+			break;
 		case "add-connect":
 			new Calico().addConnect();
 			break;
 		default:
-			System.out.println("Error usage");
+			System.out.println("Error usage .");
 			Usage usage = new Usage();
 			break;
 		}
@@ -43,7 +46,7 @@ public class ReadCommand {
 	/*Add container*/
 	public void addContainer(String []args){
 		if(args.length < 3){
-			System.out.println("Add-container error usage...");
+			System.out.println("Add-container error usage .");
 			Usage usage = new Usage("Container");
 			return;
 		}
@@ -58,7 +61,7 @@ public class ReadCommand {
 			Container container2 = new Container(host, true);
 			break;
 		default:
-			System.out.println("Add-container error usage...");
+			System.out.println("Add-container error usage .");
 			Usage usage = new Usage("Container");
 			break;
 		}
@@ -73,6 +76,7 @@ public class ReadCommand {
 		}
 		
 		Network network = new Network(args[1]);
+		
 		String networkType = args[1];
 		switch (networkType) {
 		case "ip-forward":

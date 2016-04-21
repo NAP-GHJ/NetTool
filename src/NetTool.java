@@ -22,7 +22,7 @@ public class NetTool {
 	public NetTool(String []args){
 		
 		if(args.length < 2){
-			System.out.println("Error usage");
+			System.out.println("Error usage .");
 			Usage usage = new Usage("System");
 			return;
 		}	
@@ -38,7 +38,7 @@ public class NetTool {
 			restart();
 		}
 		else{
-			System.out.println("Error usage");
+			System.out.println("Error usage .");
 			Usage usage = new Usage("System");
 		}
 	}
@@ -56,7 +56,9 @@ public class NetTool {
 	/*Start the system*/
 	public void start(){
 		/*Init config file*/
-
+		String cmd = "rm -r "+directory;
+		Command command = new Command(cmd, false);
+		
 		/*mk dir*/
 		File parent = new File(directory);
 		parent.mkdirs();
@@ -118,24 +120,6 @@ public class NetTool {
 		Command command ;
 		String cmdString;
 		
-		
-		/*cmdString = ssh+" pgrep docker";
-		command = new Command(cmdString,false);
-		BufferedReader result = command.getInro();
-		String line;
-		while( (line = result.readLine())!= null){
-			System.out.println(line);
-			cmdString = ssh+" kill "+line;
-			System.out.println(cmdString);
-			command = new Command(cmdString,false);
-		}
-		*/
-		
-		/*Restart docker process*/
-		//cmdString = ssh+" docker daemon &>/dev/null &";
-		//command = new Command(cmdString, false);
-		//command = new Command(cmdString,true);
-		
 		/*Remove all the container*/
 		cmdString = ssh+" docker stop `docker ps -a -q`";
 		command = new Command(cmdString, false);
@@ -159,6 +143,10 @@ public class NetTool {
 			String dockerProcess = ssh+" ovs-vsctl del-br ovs"+i;
 			command = new Command(dockerProcess,false);
 		}
+		
+		/*socketplane*/
+		String socketplane = ssh+" ovs-vsctl del-br docker0-ovs ";
+		command = new Command(socketplane, false);
 	}
 	public void bridgeInit(String ssh){
 		System.out.println("Init linux bridges...");
