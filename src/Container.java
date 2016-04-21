@@ -90,8 +90,8 @@ public class Container {
 				}
 				while(!nameCheck(host, nameString));
 				
-				String case1 = sshString+" docker run -itd --name "+nameString+" test bash";
-				command = new Command(case1, true);
+				cmdString = sshString+" docker run -itd --name "+nameString+" test bash";
+				command = new Command(cmdString, true);
 				
 				/*update info*/
 				info = new String[2];

@@ -24,8 +24,8 @@ public class LinuxBridge {
 			optionNetwork();
 		}
 		else{
-			System.out.println("Error usage...");
-			Usage usage = new Usage("Linux-bridge");
+			System.out.println("Error usage .");
+			Usage usage = new Usage("Network");
 		}
 	}
 	
@@ -49,7 +49,6 @@ public class LinuxBridge {
 			iprangeList[i] = "10.0."+(i+1)+".0/24";
 		}
 		execCmd();
-		//writeFile();
 	}
 	
 	/*option network*/
