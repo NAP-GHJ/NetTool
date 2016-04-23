@@ -138,18 +138,7 @@ public class Container {
 				info[1] = ipString;
 				updateHostFile(host, info);
 				break;
-				
-			case "calico":
-				do{
-				System.out.println("Network type is calico ,input ip of the container:");
-				ipC = input.nextLine();
-				}
-				while(!ipCheck(ipC));
-				String con = sshString +" docker run -itd --net none --name "+nameC+" test bash";
-				String addIp = sshString +" calicoctl container add "+nameC+" "+ipC;
-				command = new Command(con, true);
-				command = new Command(addIp, true);		
-				break;
+
 			case "pipework":
 				
 				do{
@@ -177,6 +166,33 @@ public class Container {
 				info[2] = tagString;
 				updateHostFile(host,info);  //container name,ip,tag
 				break;
+				
+			case "calico":
+				do{
+					System.out.println("Network type is calico ,please input the name of the container:");
+					nameString = input.nextLine();
+				}
+				while(!nameCheck(host,nameString));
+				
+				do{
+					System.out.println("Network type is calico ,input ip of the container:");
+					ipString = input.nextLine();
+				}
+				while(!ipCheck(ipString));
+				
+				cmdString = sshString +" docker run -itd --net none --name "+nameString+" test bash";
+				command = new Command(cmdString, true);
+				cmdString = sshString +" calicoctl container add "+nameString+" "+ipString;
+				command = new Command(cmdString, true);		
+				
+				/*update info*/
+				info = new String[2];
+				info[0] = nameString;
+				info[1] = ipString;
+				updateHostFile(host, info);
+				
+				break;
+				
 			case "docker-network":
 				do{
 					System.out.println("Network type is docker-network,input the name of the container:");

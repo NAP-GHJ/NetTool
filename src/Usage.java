@@ -56,6 +56,7 @@ public class Usage {
 		System.out.println("     -- pipework");
 		System.out.println("     -- ovs");
 		System.out.println("     -- weave");
+		System.out.println("     -- calico");
 		System.out.println("  -- show-network : display the network information of the cluster");
 		
 	}

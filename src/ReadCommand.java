@@ -37,7 +37,7 @@ public class ReadCommand {
 		case "test-container":
 			new Container().testPerformance(args);
 			break;
-		case "add-connect":
+		case "calico-add-connect":
 			new Calico().addConnect();
 			break;
 		default:
