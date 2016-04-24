@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-
 /*Add container */
 
 public class Container {
@@ -99,6 +98,23 @@ public class Container {
 				info[1] = getContainerIp(hostIp,nameString);
 				updateHostFile(host, info);
 				
+				break;
+			case "ovs":
+				
+				do{
+					System.out.println("Network type is OVS with GRE Tunnel,please input the name of the container:");
+					nameString = input.nextLine();
+				}
+				while(!nameCheck(host,nameString));
+				
+				cmdString = sshString+" docker run -itd --name "+nameString+" test bash";
+				command = new Command(cmdString, true);
+				
+				/*update info*/
+				info = new String[2];
+				info[0] = nameString;
+				info[1] = getContainerIp(hostIp,nameString);
+				updateHostFile(host,info);  //container name,ip,tag
 				break;
 			case "weave":
 				do{
@@ -375,7 +391,12 @@ public class Container {
 				String []token = temp.split(" ");
 				if(token[0].equalsIgnoreCase(name)){
 					input.close();
-					return token[1];
+					int index = token[1].indexOf("/");
+					if(index == -1)
+						return token[1];
+					else {
+						return token[1].substring(0,index);
+					}
 				}
 			}
 			input.close();

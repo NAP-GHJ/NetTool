@@ -28,6 +28,7 @@ public class Network {
 			NetTool netTool = new NetTool();
 			File file = new File(netTool.networkFile);
 			Scanner input = new Scanner(file);
+			System.out.print("Network type is ");
 			while(input.hasNext()){
 				System.out.println(input.nextLine());
 			}

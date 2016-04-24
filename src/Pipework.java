@@ -10,15 +10,15 @@ public class Pipework {
 	Pipework(String []args){
 		getHostInfo();
 		
-		Command command;
+		Command command = null;
 		
 		for(int i = 0; i < number; i++){
 			String ssh = "ssh "+eth0List[i]+" ";
 			String eth1 =ssh+"ifconfig eth1 promisc";
 			String ovs = ssh+" ovs-vsctl add-br ovs0;ovs-vsctl add-port ovs0 eth1";
-			command = new Command(eth1, true);
+			command = new Command(eth1,false);
 			System.out.println(eth1);
-			command = new Command(ovs, true);
+			command = new Command(ovs, false);
 			System.out.println(ovs);
 		}
 	}

@@ -23,6 +23,7 @@ public class ReadCommand {
 			break;
 		case "show-network":
 			new Network().display();
+			new Container().display();
 			break;
 		case "add-container":
 			addContainer(args);

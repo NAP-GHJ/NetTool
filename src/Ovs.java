@@ -34,18 +34,18 @@ public class Ovs {
 		
 		commonCmd();
 		
-		String cmd;
-		String ssh;
-		Command command;
+		String cmdString;
+		String sshString;
+		Command command = null ;
 		
 		for(int i = 0; i < number ; i++){
-			ssh = "ssh "+eth0List[i]+" ";
+			sshString = "ssh "+eth0List[i]+" ";
 			for(int j = 0; j < number ; j++){
 				if(i!=j){
-				cmd = ssh+" ovs-vsctl add-port ovs0 gre"+i+j
+				cmdString = sshString+" ovs-vsctl add-port ovs0 gre"+i+j
 						+" -- set interface gre"+i+j+" type=gre options:remote_ip="
 						+eth0List[j];
-				command = new Command(cmd, false);
+				command = new Command(cmdString, false);
 				}
 			}
 		}
@@ -78,7 +78,7 @@ public class Ovs {
 			br0List[i] = "10.0."+(i+1)+".0/16";
 			iprangeList[i] = "10.0."+(i+1)+".0/24";
 			
-			cmd = ssh +" brctl addbr br0;"+" ifconfig br0 "+br0List[i];			
+			cmd = ssh +" brctl addbr br0;"+" ifconfig br0 "+br0List[i]+" up";			
 			command = new Command(cmd, false);
 			System.out.println(cmd);
 			

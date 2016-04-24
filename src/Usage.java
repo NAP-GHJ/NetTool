@@ -1,7 +1,7 @@
 /*Print usage*/
 public class Usage {
 	public Usage(){
-		System.out.println("Usage for NetTool: network config tool for Docker Container");
+		System.out.println("Usage for NetTool: network config tool for Docker Container .\n");
 		display();
 	}
 	public Usage(String type){
@@ -23,12 +23,16 @@ public class Usage {
 		}
 	}
 	
-	
-	
 	/*Display the usage*/
 	private void display(){
-		//System.out.println("Usage......");
-		//System.out.println("Usage   end");
+		System.out.println("Usage for system .");
+		system();
+		System.out.println("\nUsage for host .");
+		host();
+		System.out.println("\nUsage for network .");
+		network();
+		System.out.println("\nUsage for container .");
+		container();
 	}
 	
 	/*Usage about container*/
@@ -49,8 +53,9 @@ public class Usage {
 		System.out.println("  -- add-network [network-type] [option/default]: create network for the cluster and network type can be choose from the following:");
 		System.out.println("     -- linux-bridge");
 		System.out.println("     -- ip-forward");
-		System.out.println("     -- weave");
 		System.out.println("     -- pipework");
+		System.out.println("     -- ovs");
+		System.out.println("     -- weave");
 		System.out.println("  -- show-network : display the network information of the cluster");
 		
 	}
