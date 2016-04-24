@@ -118,28 +118,27 @@ public class Container {
 				break;
 			case "weave":
 				do{
-					System.out.println("Network type is weave ,input the ip of the container: ");
-					ipString = input.nextLine();
-				}
-				while(!ipCheck(ipString));
-				
-				
-				do{
-					System.out.println("Please input the name of the container: ");
+					System.out.println("Network type is weave ,input the name of the container: ");
 					nameString = input.nextLine();
 				}
 				while(!nameCheck(host, nameString));
 				
-				String cmd = sshString+" weave run "+ipString+" -itd --name "+nameString+" test bash";
-				command = new Command(cmd, true);
+				do{
+					System.out.println("Network type is weave ,input the ip of the container: ");
+					ipString = input.nextLine();
+				}
+				while(!ipCheck(ipString));
+								
+				cmdString = sshString+" weave run "+ipString+" -itd --name "+nameString+" test bash";
+				command = new Command(cmdString, true);
 				
 				/*update info*/
 				info = new String[2];
 				info[0] = nameString;
 				info[1] = ipString;
 				updateHostFile(host, info);
-				
 				break;
+				
 			case "calico":
 				do{
 				System.out.println("Network type is calico ,input ip of the container:");
@@ -192,7 +191,7 @@ public class Container {
 				}
 				while(!networkNameCheck(networkName));
 				
-				cmd = sshString+" docker run -itd --name "+nameString+" --net "+networkName+" test bash";
+				String cmd = sshString+" docker run -itd --name "+nameString+" --net "+networkName+" test bash";
 				command = new Command(cmd, true);
 				
 				/*get the ip of the container */
@@ -391,6 +390,7 @@ public class Container {
 				String []token = temp.split(" ");
 				if(token[0].equalsIgnoreCase(name)){
 					input.close();
+					
 					int index = token[1].indexOf("/");
 					if(index == -1)
 						return token[1];

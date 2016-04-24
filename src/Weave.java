@@ -26,7 +26,7 @@ public class Weave {
 		}
 		else{
 			System.out.println("Error usage.");
-			Usage usage = new Usage("Weave");
+			Usage usage = new Usage("Network");
 		}
 	}
 	
@@ -83,20 +83,5 @@ public class Weave {
 			command = new Command(cmdString, false);
 			System.out.println(cmdString);
 		}
-
 	}
-	
-	/*write file*/
-	public void writeFile(){
-		try{
-			String fileName = new NetTool().networkFile;
-			PrintWriter output = new PrintWriter(fileName);
-			output.write("weave\n");
-			output.close();
-		}
-		catch(Exception e){
-			System.out.println("weave write network.txt exception");
-		}
-	}
-	
 }

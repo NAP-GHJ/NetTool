@@ -9,6 +9,9 @@ public class ReadCommand {
 	public void analysis(String []args){
 		String temp = args[0];
 		switch (temp) {
+		case "--help":
+			Usage usage = new Usage();
+			break;
 		case "system":
 			NetTool netTool = new NetTool(args);
 			break;
@@ -39,7 +42,7 @@ public class ReadCommand {
 			break;
 		default:
 			System.out.println("Error usage .");
-			Usage usage = new Usage();
+			usage = new Usage();
 			break;
 		}
 	}
