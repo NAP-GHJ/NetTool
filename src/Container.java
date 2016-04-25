@@ -192,7 +192,23 @@ public class Container {
 				updateHostFile(host, info);
 				
 				break;
+			case "flannel":
+				do{
+					System.out.println("Network type is flannel ,please input the name of the container:");
+					nameString = input.nextLine();
+				}
+				while(!nameCheck(host,nameString));
 				
+				cmdString = sshString +" docker run -itd --name "+nameString+" test bash";
+				command = new Command(cmdString, true);
+			
+				/*update info*/
+				info = new String[2];
+				info[0] = nameString;
+				info[1] = getContainerIp(hostIp,nameString);
+				updateHostFile(host, info);
+				
+				break;
 			case "docker-network":
 				do{
 					System.out.println("Network type is docker-network,input the name of the container:");

@@ -6,7 +6,7 @@ public class test {
 		try{
 			/*Read Command*/
 			
-			String cmd = "ssh 192.168.108.131 ls ../home/ghj";
+			String cmd = "ssh 192.168.108.133 source /run/flannel/subnet.env ; ifconfig docker0 ${FLANNEL_SUBNET}";
 			Command command;
 			
 			command = new Command(cmd,true);
